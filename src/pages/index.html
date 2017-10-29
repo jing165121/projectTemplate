@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    
+    <title>Bootstrap 101 Template</title>
+	<style>
+	table {
+	width:98%;
+	text-align:center;
+	color:blue
+	}
+	table .header{
+	background:green;
+	}
+	table .header-fixed {
+	  position: fixed;
+	}
+	#scrollContainer{
+	height:200px;
+	overflow-y:auto;
+	}
+	</style>
+
+    
+
+   
+  </head>
+  <body>
+   <div id='scrollContainer'  >
+<table class="table" cellspacing=0 cellpadding=0 id="mytable">
+    <thead class="header">
+            <tr>
+                <th>姓名</th><th>爱好</th>
+            </tr>
+    </thead>
+        <tbody>
+            <tr>
+                <td>一介码妞</td><td>吉他</td>
+            </tr>
+        </tbody>
+</table>
+</div>
+<!-- 以下的js只是为了批量生成数据，真正固定表头的方法是fixTabHeader -->
+
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+	<script type="text/javascript">
+$(document).ready(function(){
+    var row=$("#mytable >tbody>tr:first");
+    for(i=0;i<80;i++){
+        $('table#mytable > tbody').append(row.clone()); 
+    }
+     $("#mytable").fixedHeader();
+ });
+</script>
+   <script type="text/javascript">
+(function () {
+    (function ($) {
+        return $.fn.fixedHeader = function (options) {
+            var config;
+            config = {
+                bgColor: '#ff82ab'
+            };
+            if (options) {
+                $.extend(config, options);
+            }
+            return this.each(function () {
+                var $head, $parent, headTop, isFixed, o, ww;
+                processScroll = function () {
+                    var headTop, i, isFixed, scrollTop, t;
+                    if (!o.is(':visible')) {
+                        return;
+                    }
+                    i = void 0;
+                    scrollTop = $parent.scrollTop();
+                  t= $head.length && $head.offset().top;
+                    if (!isFixed && headTop !== t) {
+                        headTop = t;
+                    }
+                    if (scrollTop >= headTop && !isFixed) {
+                        isFixed = 1;
+                    } else {
+                        if (scrollTop <= headTop && isFixed) {
+                            isFixed = 0;
+                        }
+                    }
+                    if (isFixed) {
+                        return $('thead.header-copy', o).show();
+                    } else {
+                        return $('thead.header-copy', o).hide();
+                    }
+                };
+                o = $(this);
+                $parent=$("#scrollContainer");//$($(this).parent());
+                $head = $('thead.header', o);
+                isFixed = 0;
+                headTop = ($head.length) && ($head.offset().top);
+                $parent.on('scroll',processScroll);
+                $head.on('click', function () {
+                    if (!isFixed) {
+                        return setTimeout(function () {
+                            return $parent.scrollTop($head.scrollTop());
+                        }, 10);
+                    }
+                });
+                $head.clone().removeClass('header').addClass('header-copy header-fixed').appendTo(o);
+                ww = [];
+                o.find('thead.header > tr:first > th').each(function (i, h) {
+                    return ww.push($(h).outerWidth(false));
+                });
+                $.each(ww, function (i, w) {
+                    return o.find('thead.header > tr > th:eq(' + i + '), thead.header-copy > tr > th:eq(' + i + ')').css({ width: w });
+                });
+                o.find('thead.header-copy').css({
+                    margin: '0 auto',
+                    width: o.outerWidth(),
+                    top:headTop-2,
+                    'background-color': config.bgColor
+                });
+                return processScroll();
+            });
+        };
+    }(jQuery));
+}.call(this));
+</script>
+  </body>
+  
+</html>
